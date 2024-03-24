@@ -14,9 +14,10 @@ const int universe = 0;
 
 const char* ssid = "Quanta-Broadcast";
 const char* password = "Quanta@2023!";
-IPAddress artnetIp(10, 1, 9, 241);
-IPAddress routerIP(10, 1, 8, 1);
-IPAddress subnetIP(255, 255, 254, 0);
+//IPAddress artnetIp(10, 1, 9, 240);
+//IPAddress routerIP(10, 1, 8, 1);
+//IPAddress subnetIP(255, 255, 254, 0);
+const int builtInLedPin = 2;
 
 byte data[DMX_PACKET_SIZE];
 unsigned long lastUpdate = millis();
@@ -24,8 +25,11 @@ unsigned long lastUpdate = millis();
 void connectToWiFi() {
   Serial.print("Connecting to WiFi...");
   WiFi.begin(ssid, password);
-  WiFi.config(artnetIp, routerIP, subnetIP);
+  //WiFi.config(artnetIp, routerIP, subnetIP);
   while (WiFi.status() != WL_CONNECTED) {
+    digitalWrite(builtInLedPin, HIGH);  // Turn on built-in LED to indicate Wi-Fi connection in progress
+    delay(500);
+    digitalWrite(builtInLedPin, LOW);
     delay(500);
     Serial.print(".");
   }
@@ -62,7 +66,9 @@ void loop() {
 
 void setup() {
   Serial.begin(115200);
+  pinMode(builtInLedPin, OUTPUT);
   connectToWiFi();
   setupDMX();
   setupArtNet();
+  digitalWrite(builtInLedPin, HIGH);
 }
